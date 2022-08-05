@@ -1,0 +1,736 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/HJT.png">
+  <link rel="icon" href="/img/HJT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="H.J.T.">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. 递归神经网络（TreeRNN） 原图和公式以及说明来自：零基础入门深度学习(5) - 循环神经网络 RNN循环神经网络处理词序列，但有时候把句子看做是词的序列是不够的，比如『两个外语学院的&#x2F;学生』与『两个&#x2F;外语学院的学生』意思不同，为了能够让模型区分出两个不同的意思，模型可借助树结构去处理信息，而不是序列，这就是递归神经网络的作用。当面对按照树&#x2F;图结构处理信息更有效的任务时，递归神经网络通常">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep learning笔记4-TreeRNN递归神经网络">
+<meta property="og:url" content="https://hjtai.github.io/2017/08/17/zh/Deep%20learning%E7%AC%94%E8%AE%B04-TreeRNN%E9%80%92%E5%BD%92%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:site_name" content="H.J.T. Home">
+<meta property="og:description" content="1. 递归神经网络（TreeRNN） 原图和公式以及说明来自：零基础入门深度学习(5) - 循环神经网络 RNN循环神经网络处理词序列，但有时候把句子看做是词的序列是不够的，比如『两个外语学院的&#x2F;学生』与『两个&#x2F;外语学院的学生』意思不同，为了能够让模型区分出两个不同的意思，模型可借助树结构去处理信息，而不是序列，这就是递归神经网络的作用。当面对按照树&#x2F;图结构处理信息更有效的任务时，递归神经网络通常">
+<meta property="og:locale">
+<meta property="og:image" content="https://hjtai.github.io/image/DL/4/1-1.png">
+<meta property="og:image" content="https://hjtai.github.io/image/DL/4/1-2.png">
+<meta property="og:image" content="https://hjtai.github.io/image/DL/4/1-3.png">
+<meta property="og:image" content="https://hjtai.github.io/image/DL/4/1-4.png">
+<meta property="og:image" content="https://hjtai.github.io/image/DL/4/2-1.png">
+<meta property="og:image" content="https://hjtai.github.io/image/DL/4/2-2.png">
+<meta property="article:published_time" content="2017-08-17T09:18:56.000Z">
+<meta property="article:modified_time" content="2022-08-05T10:02:02.269Z">
+<meta property="article:author" content="H.J.T.">
+<meta property="article:tag" content="Deep Learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hjtai.github.io/image/DL/4/1-1.png">
+  
+  
+  
+  <title>Deep learning笔记4-TreeRNN递归神经网络 - H.J.T. Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hjtai.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>H.J.T. Home</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Home
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archives
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                Categories
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Tags
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                About
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Deep learning笔记4-TreeRNN递归神经网络"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2017-08-17 18:18" pubdate>
+          August 17, 2017 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.8k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Deep learning笔记4-TreeRNN递归神经网络</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="递归神经网络treernn">1. 递归神经网络（TreeRNN）</h3>
+<p>原图和公式以及说明来自：<a target="_blank" rel="noopener" href="https://zybuluo.com/hanbingtao/note/541458" title="Title">零基础入门深度学习(5) - 循环神经网络</a></p>
+<p>RNN循环神经网络处理词序列，但有时候把句子看做是词的序列是不够的，比如『两个外语学院的/学生』与『两个/外语学院的学生』意思不同，为了能够让模型区分出两个不同的意思，模型可借助树结构去处理信息，而不是序列，这就是递归神经网络的作用。当面对按照树/图结构处理信息更有效的任务时，递归神经网络通常都会获得不错的结果。</p>
+<p>TreeRNN递归神经网络可以把一个树/图结构信息编码为一个向量，也就是把信息映射到一个语义向量空间中。这个语义向量空间满足某类性质，比如语义相似的向量距离更近。如果两句话（尽管内容不同）它的意思是相似的，那么把它们分别编码后的两个向量的距离也相近；反之就远。如下图所示：</p>
+<hr />
+<figure>
+<img src="/image/DL/4/1-1.png" srcset="/img/loading.gif" lazyload alt="TreeRNN" /><figcaption aria-hidden="true">TreeRNN</figcaption>
+</figure>
+<hr />
+<p>递归神经网络可以将词、句、段、篇按照他们的语义映射到同一个向量空间中，也就是把可组合（树/图结构）的信息表示为一个个有意义的向量。</p>
+<hr />
+<figure>
+<img src="/image/DL/4/1-2.png" srcset="/img/loading.gif" lazyload alt="TreeRNN" /><figcaption aria-hidden="true">TreeRNN</figcaption>
+</figure>
+<hr />
+<p>蓝色表示正面评价，红色表示负面评价。每个节点是一个向量，这个向量表达了以它为根的子树的情感评价。比如"intelligent humor"是正面评价，而"care about cleverness wit or any other kind of intelligent humor"是中性评价。可以看到，模型能够正确的处理doesn't的含义，将正面评价转变为负面评价。</p>
+<p>尽管递归神经网络具有更为强大的表示能力，但是在实际应用中并不太流行。其中一个主要原因是，递归神经网络的输入是树/图结构，而这种结构需要花费很多人工去标注。</p>
+<h4 id="递归神经网络输出值的计算正向">1.1. 递归神经网络输出值的计算（正向）</h4>
+<p>递归神经网络的输入是两个子节点（也可以是多个），输出就是将这两个子节点编码后产生的父节点，父节点的维度和每个子节点是相同的。如下图所示：</p>
+<hr />
+<figure>
+<img src="/image/DL/4/1-3.png" srcset="/img/loading.gif" lazyload alt="TreeRNN" /><figcaption aria-hidden="true">TreeRNN</figcaption>
+</figure>
+<hr />
+<p>C1和C2分别是表示两个子节点的向量，P是表示父节点的向量。子节点和父节点组成一个全连接神经网络，也就是子节点的每个神经元都和父节点的每个神经元两两相连。用矩阵W表示这些连接上的权重，它的维度将是d*2d，其中，d表示每个节点的维度。父节点的计算公式可以写成：</p>
+<p><span class="math display">\[\begin{align}
+\mathbf{p} = tanh(W\begin{bmatrix}\mathbf{c}_1\\\mathbf{c}_2\end{bmatrix}+\mathbf{b})
+\end{align}\]</span></p>
+<p>在上式中，tanh是激活函数（当然也可以用其它的激活函数），b是偏置项，它也是一个维度为d的向量。</p>
+<p>然后，把产生的父节点的向量和其他子节点的向量再次作为网络的输入，再次产生它们的父节点。如此递归下去，直至整棵树处理完毕。最终，将得到根节点的向量，可以认为它是对整棵树的表示，这样就实现了把树映射为一个向量。在下图中使用递归神经网络处理一棵树，最终得到的向量（整棵树）的表示：</p>
+<hr />
+<figure>
+<img src="/image/DL/4/1-4.png" srcset="/img/loading.gif" lazyload alt="TreeRNN" /><figcaption aria-hidden="true">TreeRNN</figcaption>
+</figure>
+<hr />
+<p>递归神经网络的权重w和偏置项b在所有的节点都是共享的。</p>
+<h4 id="递归神经网络的训练反向">1.2. 递归神经网络的训练（反向）</h4>
+<p>递归神经网络的训练算法BPTS和循环神经网络类似，两者不同之处在于：</p>
+<p>● 前者需要将残差从根节点反向传播到各个子节点</p>
+<p>● 后者是将残差从当前时刻反向传播到初始时刻</p>
+<p>误差项从父节点传递到其子节点的公式：</p>
+<p><span class="math display">\[\begin{align}
+\delta_{c_j}&amp;=\frac{\partial{E}}{\partial{\mathbf{net}_{c_j}}}\\
+&amp;=\frac{\partial{E}}{\partial{\mathbf{c}_j}}\frac{\partial{\mathbf{c}_j}}{\partial{\mathbf{net}_{c_j}}}\\
+&amp;=W_j^T\delta_p\circ f&#39;(\mathbf{net}_{c_j})
+\end{align}\]</span></p>
+<p>● 误差函数在第l层对权重的梯度为：</p>
+<p><span class="math display">\[\begin{align}
+\frac{\partial{E}}{\partial{w_{ji}^{(l)}}}&amp;=\frac{\partial{E}}{\partial{\mathbf{net}_{p_j}^{(l)}}}\frac{\partial{\mathbf{net}_{p_j}^{(l)}}}{\partial{w_{ji}^{(l)}}}\\
+&amp;=\delta_{p_j}^{(l)}c_i^{(l)}\\
+\end{align}\]</span></p>
+<p>权重梯度是各个层权重梯度之和。即：</p>
+<p><span class="math display">\[\begin{align}
+\frac{\partial{E}}{\partial{W}}=\sum_l\frac{\partial{E}}{\partial{W^{(l)}}}
+\end{align}\]</span></p>
+<p>如果使用梯度下降优化算法，那么权重更新公式为： <span class="math display">\[\begin{align}
+W\gets W + \eta\frac{\partial{E}}{\partial{W}}
+\end{align}\]</span></p>
+<p>● 误差函数对第l层偏置项的梯度为：</p>
+<p><span class="math display">\[\begin{align}
+\frac{\partial{E}}{\partial{b_j^{(l)}}}&amp;=\frac{\partial{E}}{\partial{\mathbf{net}_{p_j}^{(l)}}}\frac{\partial{\mathbf{net}_{p_j}^{(l)}}}{\partial{b_j^{(l)}}}\\
+&amp;=\delta_{p_j}^{(l)}\\
+\end{align}\]</span></p>
+<p>偏置项梯度是各个层偏置项梯度之和，即：</p>
+<p><span class="math display">\[\begin{align}
+\frac{\partial{E}}{\partial{\mathbf{b}}}=\sum_l\frac{\partial{E}}{\partial{\mathbf{b}^{(l)}}}
+\end{align}\]</span></p>
+<p>如果使用梯度下降优化算法，那么偏置项更新公式为： <span class="math display">\[\begin{align}
+\mathbf{b}\gets \mathbf{b} + \eta\frac{\partial{E}}{\partial{\mathbf{b}}}
+\end{align}\]</span></p>
+<h3 id="相关应用">2. 相关应用</h3>
+<h4 id="在自然语言处理的应用nlp">2.1 在自然语言处理的应用（NLP）</h4>
+<p>递归神经网络能够完成句子的语法分析，产生一颗语法解析树。</p>
+<hr />
+<figure>
+<img src="/image/DL/4/2-1.png" srcset="/img/loading.gif" lazyload alt="TreeRNN" /><figcaption aria-hidden="true">TreeRNN</figcaption>
+</figure>
+<hr />
+<h4 id="在自然场景的应用">2.1 在自然场景的应用</h4>
+<p>除了自然语言之外，自然场景也具有可组合的性质。因此可以用类似的模型完成自然场景的解析，如下图所示：</p>
+<hr />
+<figure>
+<img src="/image/DL/4/2-2.png" srcset="/img/loading.gif" lazyload alt="TreeRNN" /><figcaption aria-hidden="true">TreeRNN</figcaption>
+</figure>
+<hr />
+<h3 id="参考资料reference">参考资料（Reference）</h3>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://zybuluo.com/hanbingtao/note/626300" title="Title">零基础入门深度学习(7) - 递归神经网络</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://qiita.com/hiroto0227/items/ea1c723903a3e20a32e2" title="Title">Reccusive Neural Networkを用いた文章と句の類似度算出</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://qiita.com/HirofumiYashima/items/8ced35dcb437ed6aab6c" title="Title">Socher氏論文推論にNeural Tensor（テンソル）Networkモデルの提案</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="http://www.iro.umontreal.ca/~bengioy/talks/gss2012-YB6-NLP-recursive.pdf%22Title%22">Recursive Neural Network</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://nlp.stanford.edu/~socherr/EMNLP2013_RNTN.pdf" title="Title">Recursive Deep Models</a></p></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Deep-Learning/">#Deep Learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Deep learning笔记4-TreeRNN递归神经网络</div>
+      <div>https://hjtai.github.io/2017/08/17/zh/Deep learning笔记4-TreeRNN递归神经网络/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>H.J.T.</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>August 17, 2017</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>Licensed under</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2017/08/20/zh/Deep%20learning%E7%AC%94%E8%AE%B05-GAN%E7%94%9F%E6%88%90%E5%BC%8F%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C/" title="Deep learning笔记5-GAN生成式对抗网络">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Deep learning笔记5-GAN生成式对抗网络</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2017/08/16/zh/Deep%20learning%E7%AC%94%E8%AE%B03-RNN%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" title="Deep learning笔记3-RNN循环神经网络">
+                        <span class="hidden-mobile">Deep learning笔记3-RNN循环神经网络</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;Table of Contents</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://www.hjt.so" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://www.hjt.so" target="_blank" rel="nofollow noopener"><span>H.J.T. Home</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+</body>
+</html>
