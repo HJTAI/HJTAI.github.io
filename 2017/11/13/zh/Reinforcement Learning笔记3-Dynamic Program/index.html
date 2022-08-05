@@ -1,0 +1,709 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/HJT.png">
+  <link rel="icon" href="/img/HJT.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="H.J.T.">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Bellman最优解策略 - 动态规划法（Dynamic Programming Methods） 动态规划是一种通过把复杂问题划分为子问题，并对自问题进行求解，最后把子问题的解结合起来解决原问题的方法。 「动态」是指问题由一系列的状态组成，而且状态能一步步地改变。 「规划」即优化每一个子问题。因为MDP 的 Markov 特性，即某一时刻的子问题仅仅取决于上一时刻的子问题的 action，并且">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reinforcement Learning笔记3-Dynamic Program">
+<meta property="og:url" content="https://hjtai.github.io/2017/11/13/zh/Reinforcement%20Learning%E7%AC%94%E8%AE%B03-Dynamic%20Program/index.html">
+<meta property="og:site_name" content="H.J.T. Home">
+<meta property="og:description" content="Bellman最优解策略 - 动态规划法（Dynamic Programming Methods） 动态规划是一种通过把复杂问题划分为子问题，并对自问题进行求解，最后把子问题的解结合起来解决原问题的方法。 「动态」是指问题由一系列的状态组成，而且状态能一步步地改变。 「规划」即优化每一个子问题。因为MDP 的 Markov 特性，即某一时刻的子问题仅仅取决于上一时刻的子问题的 action，并且">
+<meta property="og:locale">
+<meta property="og:image" content="https://hjtai.github.io/image/RL/3/1.jpg">
+<meta property="og:image" content="https://hjtai.github.io/image/RL/3/2.jpg">
+<meta property="og:image" content="https://hjtai.github.io/image/RL/3/3.jpg">
+<meta property="og:image" content="https://hjtai.github.io/image/RL/3/4.png">
+<meta property="article:published_time" content="2017-11-13T09:18:56.000Z">
+<meta property="article:modified_time" content="2022-08-05T10:02:02.319Z">
+<meta property="article:author" content="H.J.T.">
+<meta property="article:tag" content="Reinforcement Learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hjtai.github.io/image/RL/3/1.jpg">
+  
+  
+  
+  <title>Reinforcement Learning笔记3-Dynamic Program - H.J.T. Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hjtai.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>H.J.T. Home</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Home
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archives
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                Categories
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Tags
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                About
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Reinforcement Learning笔记3-Dynamic Program"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2017-11-13 18:18" pubdate>
+          November 13, 2017 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.2k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Reinforcement Learning笔记3-Dynamic Program</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h4 id="bellman最优解策略---动态规划法dynamic-programming-methods">Bellman最优解策略 - 动态规划法（Dynamic Programming Methods）</h4>
+<p>动态规划是一种通过把复杂问题划分为子问题，并对自问题进行求解，最后把子问题的解结合起来解决原问题的方法。</p>
+<p>「动态」是指问题由一系列的状态组成，而且状态能一步步地改变。</p>
+<p>「规划」即优化每一个子问题。因为MDP 的 Markov 特性，即某一时刻的子问题仅仅取决于上一时刻的子问题的 action，并且 Bellman 方程可以递归地切分子问题。</p>
+<h3 id="策略估计policy-evaluation">1. 策略估计(Policy Evaluation)</h3>
+<p>对于任意的策略π，我们如何计算其状态值函数Vπ(s)？这个问题被称作策略估计。</p>
+<p>● 基于当前的 Policy 计算出每个状态的 Value function</p>
+<p>● 同步更新：每次迭代更新所有的状态的 v <span class="math display">\[\begin{align} 
+V_{k+1}(s)=\sum_{a\in A}\pi(a|s)\left( R_s^a+\gamma\sum_{s&#39;\in S}P_{ss&#39;}^av_k(s&#39;)\right)
+\end{align}\]</span></p>
+<p>● 矩阵形式： <span class="math display">\[\begin{align} 
+\mathbf{v^{k+1}=R^{\pi}+\gamma P^{\pi}v^k}
+\end{align}\]</span></p>
+<hr />
+<p><img src="/image/RL/3/1.jpg" srcset="/img/loading.gif" lazyload alt="RL" /> <img src="/image/RL/3/2.jpg" srcset="/img/loading.gif" lazyload alt="RL" /></p>
+<hr />
+<p>● 左边是第 k 次迭代每个 state 上状态价值函数的值，右边是通过贪心（greedy）算法找到策略</p>
+<p>● 计算实例： <span class="math display">\[\begin{align}
+k=2, -1.7  \approx -1.75 = 0.25*(-1+0) + 0.25*(-1-1) + 0.25*(-1-1) + 0.25*(-1-1)
+\end{align}\]</span> <span class="math display">\[\begin{align}
+k=3, -2.9  \approx -2.925 = -0.25*(-1-2) + 0.25*(-1-2) + 0.25*(-1-2) + 0.25*(-1-1.7)
+\end{align}\]</span></p>
+<h3 id="策略改进policy-improvement">2. 策略改进(Policy Improvement)</h3>
+<p>● 基于当前的状态价值函数（value function），用贪心算法找到最优策略</p>
+<p><span class="math inline">\(\pi&#39;(s)=\arg\max_{a\in A} q_{\pi}(s,a)\)</span></p>
+<p>● Vπ会一直迭代到收敛，具体证明如图:</p>
+<hr />
+<figure>
+<img src="/image/RL/3/3.jpg" srcset="/img/loading.gif" lazyload alt="RL" /><figcaption aria-hidden="true">RL</figcaption>
+</figure>
+<hr />
+<p>事实上在大多数情况下 Policy evaluation 不必要非常逼近最优值，这时我们通常引入 -convergence 函数来控制迭代停止。</p>
+<p>很多情况下价值函数还未完全收敛，Policy 就已经最优，所以在每次迭代之后都可以更新策略（Policy），当策略无变化时停止迭代。</p>
+<h3 id="策略迭代policy-iteration">3. 策略迭代(Policy Iteration)</h3>
+<p>策略迭代算法就是策略估计和策略改进两节内容的组合。假设有一个策略π，那么可以用policy evaluation获得它的值函数Vπ(s)，然后根据policy improvement得到更好的策略π'，接着再计算Vπ'(s),再获得更好的策略π''。</p>
+<h3 id="价值迭代value-iteration">4. 价值迭代(Value Iteration)</h3>
+<p>最优化原理：当且仅当状态 s 达到任意能到达的状态 s‘ 时，价值函数 v 能在当前策略（policy）下达到最优，即<span class="math inline">\(v_{\pi}(s&#39;) = v_*(s&#39;)\)</span>，与此同时，状态 s 也能基于当前策略达到最优，即<span class="math inline">\(v_{\pi}(s) = v_*(s)\)</span></p>
+<p>状态转移公式为： <span class="math inline">\(v_{k+1}(s) = \max_{a\in A}(R^a_s+\gamma\sum_{s&#39; \in S}P^a_{ss&#39;}v_k(s&#39;))\)</span></p>
+<p>矩阵形式为：<span class="math inline">\(\mathbf{v_{k+1}} =\max_{a \in A} \mathbf{R^a_s} +\gamma\mathbf{P^av_k})\)</span></p>
+<p>下面是一个实例，求每个格子到终点的最短距离，走一步的 reward 是 -1:</p>
+<hr />
+<figure>
+<img src="/image/RL/3/4.png" srcset="/img/loading.gif" lazyload alt="RL" /><figcaption aria-hidden="true">RL</figcaption>
+</figure>
+<hr />
+<h4 id="同步动态规划算法小结">同步动态规划算法小结</h4>
+<p>MDP 的问题主要分两类：</p>
+<p>① Prediction 问题 - 输入：MDP (S,A,P,R,y)和策略（policy）π</p>
+<ul>
+<li>输出：状态价值函数 Vπ</li>
+</ul>
+<p>② Control 问题 - 输入：MDP (S,A,P,R.y)</p>
+<ul>
+<li>输出：最优状态价值函数V*和最优策略π</li>
+</ul>
+<p>● 策略估计(Policy Evaluation)解决的是 Prediction 问题，使用了贝尔曼期望方程（Bellman Expectation Equation）</p>
+<p>● 策略改进(Policy Improvement)解决的是 Control 问题，实质是在迭代策略评估之后加一个选择 Policy 的过程，使用的是贝尔曼期望方程和贪心算法</p>
+<p>● 策略迭代（Policy Iteration）解决的是 Control 问题，实质是在迭代策略评估之后加一个选择 Policy 的过程，使用的是贝尔曼期望方程和贪心算法</p>
+<p>● 价值迭代（Value Iteration） 解决的是 Control 问题，它并没有直接计算策略（Policy），而是在得到最优的基于策略的价值函数之后推导出最优的 Policy，使用的是贝尔曼最优化方程（Bellman Optimality Equation）</p>
+<h3 id="参考资料reference">参考资料（Reference）</h3>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://mpatacchiola.github.io/blog/2016/12/09/dissecting-reinforcement-learning.html" title="Title">Dissecting Reinforcement Learning-Part.1</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://studywolf.wordpress.com/2012/11/25/reinforcement-learning-q-learning-and-exploration/" title="Title">REINFORCEMENT LEARNING PART 1: Q-LEARNING AND EXPLORATION</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://qiita.com/Hironsan/items/56f6c0b2f4cfd28dd906" title="Title">Pythonではじめる強化学習</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://qiita.com/icoxfog417/items/242439ecd1a477ece312" title="Title">ゼロからDeepまで学ぶ強化学習</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25319023?utm_source=tuicool&amp;utm_medium=referral" title="Title">强化学习知识整理</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="http://www.cnblogs.com/jinxulin/p/3526542.html" title="Title">动态规划法(Dynamic Programming Methods)</a></p></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Reinforcement-Learning/">#Reinforcement Learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Reinforcement Learning笔记3-Dynamic Program</div>
+      <div>https://hjtai.github.io/2017/11/13/zh/Reinforcement Learning笔记3-Dynamic Program/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>H.J.T.</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>November 13, 2017</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>Licensed under</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2017/11/14/zh/Reinforcement%20Learning%E7%AC%94%E8%AE%B04-Monte%20Carlo/" title="Reinforcement Learning笔记4-Monte Carlo">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Reinforcement Learning笔记4-Monte Carlo</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2017/11/12/zh/Reinforcement%20Learning%E7%AC%94%E8%AE%B02-Bellman/" title="Reinforcement Learning笔记2-Bellman">
+                        <span class="hidden-mobile">Reinforcement Learning笔记2-Bellman</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;Table of Contents</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://www.hjt.so" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://www.hjt.so" target="_blank" rel="nofollow noopener"><span>H.J.T. Home</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+</body>
+</html>
