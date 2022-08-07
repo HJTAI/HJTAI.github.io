@@ -1,6 +1,7 @@
 ---
 title: About
 date: 2016-12-11 12:59:30
+layout: about
 ---
 
 Welcome to [H.J.T. Github](https://hjtso.github.io).

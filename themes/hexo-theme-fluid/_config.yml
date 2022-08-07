@@ -952,9 +952,23 @@ about:
   # 更多图标可从 https://hexo.fluid-dev.com/docs/icon/ 查找，`class` 代表图标的 css class，添加 `qrcode` 后，图标不再是链接而是悬浮二维码
   # More icons can be found from https://hexo.fluid-dev.com/docs/en/icon/  `class` is the css class of the icon. If adding `qrcode`, The icon is no longer a link, but a hovering QR code
   icons:
-    - { class: "iconfont icon-github-fill", link: "https://github.com", tip: "GitHub" }
-    - { class: "iconfont icon-douban-fill", link: "https://douban.com", tip: "豆瓣" }
-    - { class: "iconfont icon-wechat-fill", qrcode: "/img/favicon.png" }
+    - { class: "iconfont icon-github-fill", link: "https://github.com/HJTSO", tip: "GitHub" }
+    - { class: "iconfont icon-facebook-fill", link: "https://www.facebook.com/jintao.huang.1", tip: "Facebook" }
+    - { class: "iconfont icon-linkedin-fill", link: "https://www.linkedin.com/in/jintao-huang-48429565", tip: "Linkedin" }
+    - { class: "iconfont icon-images", link: "https://www.instagram.com/huang_jintao", tip: "Instagram" }
+    - { class: "iconfont icon-image", link: "https://www.xiaohongshu.com/user/profile/5eea2b43000000000101ccdb", tip: "小红书" }
+    - { class: "iconfont icon-youtube-fill", link: "https://www.youtube.com/channel/UC8fRWkC33g0ra_SLf0ZYgkQ", tip: "Youtube" }
+    - { class: "iconfont icon-bilibili-fill", link: "https://space.bilibili.com/34645045", tip: "Bilibili" }
+    - { class: "iconfont icon-zhihu-fill", link: "https://www.zhihu.com/people/hjtso", tip: "知乎" }
+    - { class: "iconfont icon-books", link: "https://www.quora.com/profile/Jintao-Huang", tip: "Quora" }
+    - { class: "iconfont icon-twitter-fill", link: "https://twitter.com/_HJT", tip: "Twitter" }
+    - { class: "iconfont icon-weibo-fill", link: "https://weibo.com/musimusi", tip: "微博" }
+    - { class: "iconfont icon-mail", link: "hjt@hjt.so", tip: "hjt@hjt.so" }
+    - { class: "iconfont icon-wechat-fill", link: "_hjtso", tip: "WechatID:_hjtso" }
+    - { class: "iconfont icon-line-fill", link: "_hjtso", tip: "LineID:jintao.huang" }
+    - { class: "iconfont icon-telegram-fill", link: "huangjintao", tip: "TelegramID:huangjintao" }
+    - { class: "iconfont icon-discord-fill", link: "HJT#2010", tip: "DiscordID:HJT#2010" }
+    # - { class: "iconfont icon-wechat-fill", qrcode: "/img/favicon.png" }
 
 
 #---------------------------
