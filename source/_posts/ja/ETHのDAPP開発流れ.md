@@ -34,7 +34,7 @@ category: Blockchain
 -------------------------------------
 ##### Githubプロジェクト（Github）
 
-- [Github Link](https://github.com/HJTSO/Team_C "Title") 
+- [Github Link](https://github.com/hjtso/Team_C "Title") 
 
 ##### 参考資料（Reference）
 

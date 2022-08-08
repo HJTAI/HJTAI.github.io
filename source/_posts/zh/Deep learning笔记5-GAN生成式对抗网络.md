@@ -323,7 +323,7 @@ def train(BATCH_SIZE):
 
 ### 程序实例（Program Example）
 
-- [Github Link](https://github.com/HJTSO/face-generation/blob/master/dlnd_face_generation.ipynb "Title") 
+- [Github Link](https://github.com/hjtso/face-generation/blob/master/dlnd_face_generation.ipynb "Title") 
 
 ### 参考资料（Reference）
 

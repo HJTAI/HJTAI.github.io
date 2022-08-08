@@ -41,7 +41,7 @@ category: Blockchain
 -------------------------------------
 ##### Githubプロジェクト（Github）
 
-- [Github Link](https://github.com/HJTSO/eos "Title") 
+- [Github Link](https://github.com/hjtso/eos "Title") 
 
 ##### 参考資料（Reference）
 
