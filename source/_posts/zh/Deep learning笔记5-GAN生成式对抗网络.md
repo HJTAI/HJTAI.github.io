@@ -4,6 +4,7 @@ title: Deep learning笔记5-GAN生成式对抗网络
 lang: zh
 date: 2017-08-20 18:18:56
 tags: Deep Learning
+category: Deep Learning
 ---
 
 ### 1. 生成式对抗网络（GAN）

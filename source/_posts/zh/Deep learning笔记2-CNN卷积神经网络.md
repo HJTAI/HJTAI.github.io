@@ -4,6 +4,7 @@ title: Deep learning笔记2-CNN卷积神经网络
 lang: zh
 date: 2017-08-15 18:18:56
 tags: Deep Learning
+category: Deep Learning
 ---
 
 ### 1. 卷积神经网络简介（CNN）

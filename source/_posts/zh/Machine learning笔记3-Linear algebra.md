@@ -4,6 +4,7 @@ title: Machine learning笔记3-Linear algebra
 lang: zh
 date: 2017-07-28 03:00:00
 tags: Machine Learning
+category: Machine Learning
 ---
 ![pic](/image/ML/3_1.jpg)  
 

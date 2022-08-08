@@ -4,6 +4,7 @@ title: Deep learning笔记3-RNN循环神经网络
 lang: zh
 date: 2017-08-16 18:18:56
 tags: Deep Learning
+category: Deep Learning
 ---
 
 ### 1. 循环神经网络（RNN）
